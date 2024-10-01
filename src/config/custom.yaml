@@ -1,0 +1,35 @@
+VIDEO:
+  MODE: "webcam"  # webcam, video
+  VIDEO_PATH: "src/data/data/datasample_video.mp4"
+  WEBCAM_ID: 0  # Change webcam ID if needed
+
+
+MODEL: { }
+
+LOGGING:
+  SAVE_TO_FILE: false
+  LOG_FILE: "logs/output.log"
+
+DATASET:
+  PATH: "src/data/data"
+
+TRAIN:
+  BATCH_SIZE: 128
+  LR: 0.001
+  EPOCHS: 50
+  MODEL_NAME: "efficientnet_b0"
+
+EXPORT:
+  ENABLED: true
+  EVAL: true
+  MODEL_NAME: "efficientnet_b0"
+  INPUT_WEIGHTS: "src/models/weights/efficientnet_b0_fer.pth"
+  OUTPUT_PATH: "src/models/weights/EfficientNetFER.onnx"
+
+INFERENCE:
+  CONFIDENCE_THRESHOLD: 0.5
+  YOLO_PATH: "src/models/weights/yolov11n-face.onnx"
+  FER_PATH: "src/models/weights/EfficientNetFER.onnx"
+
+
+IS_TRAINING: true
