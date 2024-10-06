@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from src.data.dataset.loader import get_data_loader
 from src.models.efficientnet_fer import EfficientNetFER
+from src.train.evaluation import evaluate_model_performance
 
 def test_model(model, test_loader):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -80,3 +81,4 @@ def train_model(cfg):
     torch.save(model.state_dict(), output_path)
     print(f"✅ Model saved successfully, at : {output_path}")
 
+    evaluate_model_performance(model, test_loader, device)
