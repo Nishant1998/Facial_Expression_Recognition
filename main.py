@@ -1,5 +1,7 @@
 import argparse
 
+from src.serve.inferencer import infer
+from src.train.trainer import train_model
 from src.utils import setup_logger
 from src.utils.config_utils import load_config
 
@@ -14,5 +16,9 @@ if __name__ == "__main__":
     # Load config
     cfg = load_config(args.config)
 
+    if cfg.IS_TRAINING:
+        train_model(cfg)
+    else:
+        infer(cfg)
 
 

@@ -102,6 +102,68 @@ class FaceEmotionNet:
 
         return {"detections": detections, "image": result.orig_img}
 
+    def plot(self, result, cfg, fps=None):
+        """
+        Visualizes the detected faces and their emotions with correct emoji display.
+
+        :param result: Dictionary containing detections and image.
+        :param cfg: Configuration settings.
+        :param fps: Frame rate for overlay display.
+        :return: Annotated image.
+        """
+        display_fps = cfg.DISPLAY.FPS
+        color = cfg.DISPLAY.OVERLAY_COLOR
+
+        detections = result['detections']
+        image = result['image']
+
+        if self.verbose:
+            logger.debug(f"Plotting {len(detections)} detections on the image.")
+
+        # Convert OpenCV image (BGR) to PIL image (RGB)
+        pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        draw = ImageDraw.Draw(pil_image)
+
+        try:
+            font = ImageFont.load_default(32)
+
+            for detection in detections:
+                x1, y1, x2, y2 = detection["bbox"]
+                emotion_label = detection["emotion_label"]
+                emoji = detection["emoji"]
+                confidence = detection["confidence"]
+
+                text = f"{emotion_label}"
+                if cfg.DISPLAY.EMOJI:
+                    try:
+                        emoji_path = os.path.join("src/asset/emoji/", emoji.lower() + ".png")
+                        if os.path.exists(emoji_path):
+                            emoji_img = Image.open(emoji_path).convert("RGBA")
+                            w, h = int(x2 - x1), int(y2 - y1)
+                            emoji_resized = emoji_img.resize((w, h), Image.Resampling.LANCZOS)
+                            pil_image.paste(emoji_resized, (int(x1), int(y1)), emoji_resized)
+                        else:
+                            draw.text((x1, y1 - 30), text, font=font, fill=color)
+                            draw.rectangle([x1, y1, x2, y2], outline=color, width=3)
+                    except Exception as e:
+                        logger.warning(f"Could not draw emoji {emoji}: {e}")
+                        draw.text((x1, y1 - 30), text, font=font, fill=color)
+                        draw.rectangle([x1, y1, x2, y2], outline=color, width=3)
+                else:
+                    draw.text((x1, y1 - 30), text, font=font, fill=color)
+                    draw.rectangle([x1, y1, x2, y2], outline=color, width=3)
+
+            if display_fps and fps is not None:
+                draw.text((10, 30), f"FPS: {int(fps)}", font=font, fill=color)
+
+            if self.verbose:
+                logger.debug("Annotations completed successfully.")
+
+        except Exception as e:
+            logger.error(f"Error rendering emoji: {e}", exc_info=True)
+
+        # Convert PIL image back to OpenCV format
+        return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
     def extract_faces_from_yolo(self, result, image, target_size=128):
         """
