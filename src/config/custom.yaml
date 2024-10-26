@@ -3,6 +3,11 @@ VIDEO:
   VIDEO_PATH: "src/data/data/datasample_video.mp4"
   WEBCAM_ID: 0  # Change webcam ID if needed
 
+DISPLAY:
+  FPS: false  # Show only FPS
+  VERBOSE: false
+  OVERLAY_COLOR: [ 255, 0, 0 ]  # Red overlay text
+  EMOJI: false
 
 MODEL: { }
 
@@ -31,5 +36,13 @@ INFERENCE:
   YOLO_PATH: "src/models/weights/yolov11n-face.onnx"
   FER_PATH: "src/models/weights/EfficientNetFER.onnx"
 
+API:
+  HOST: "0.0.0.0"
+  PORT: 8000
+  CORS_ORIGINS: [ "*" ]
+  MAX_VIDEO_SIZE_MB: 100
+  MAX_IMAGE_SIZE_MB: 10
+  ALLOWED_VIDEO_EXT: [ ".mp4", ".avi", ".mov" ]
+  ALLOWED_IMAGE_EXT: [ ".jpg", ".jpeg", ".png" ]
 
 IS_TRAINING: true

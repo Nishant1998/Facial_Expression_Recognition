@@ -8,7 +8,14 @@ _C.VIDEO.MODE = "webcam"  # webcam, video
 _C.VIDEO.VIDEO_PATH = "src/data/data/datasample_video.mp4"
 _C.VIDEO.WEBCAM_ID = 0
 
-
+# ===========================
+# 🔹 DISPLAY SETTINGS
+# ===========================
+_C.DISPLAY = CN()
+_C.DISPLAY.FPS = True
+_C.DISPLAY.EMOJI = False
+_C.DISPLAY.VERBOSE = False
+_C.DISPLAY.OVERLAY_COLOR = (255, 255, 0)
 
 # ===========================
 # 🔹 MODEL SETTINGS
@@ -56,6 +63,18 @@ _C.INFERENCE.CONFIDENCE_THRESHOLD = 0.5  # Minimum confidence for detection
 _C.INFERENCE.YOLO_PATH = "src/models/weights/yolov11n-face.onnx"  # YOLO face detection model path
 _C.INFERENCE.FER_PATH = "src/models/weights/EfficientNetFER.onnx"  # Facial Expression Recognition (FER) model path
 
+# ===========================
+# 🔹 API Config Group
+# ===========================
+
+_C.API = CN()
+_C.API.HOST = "0.0.0.0"
+_C.API.PORT = 8000
+_C.API.CORS_ORIGINS = ["*"]
+_C.API.MAX_VIDEO_SIZE_MB = 100
+_C.API.MAX_IMAGE_SIZE_MB = 10
+_C.API.ALLOWED_VIDEO_EXT = [".mp4", ".avi", ".mov"]
+_C.API.ALLOWED_IMAGE_EXT = [".jpg", ".jpeg", ".png"]
 
 
 _C.IS_TRAINING = True
