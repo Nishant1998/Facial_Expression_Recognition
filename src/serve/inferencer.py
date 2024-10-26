@@ -78,3 +78,17 @@ def infer(cfg):
     logger.info("Video stream closed and resources released.")
 
 
+def process_image_with_model(image: np.ndarray, model, cfg) -> np.ndarray:
+    """
+    Run prediction on a single image frame and return annotated output.
+    """
+    try:
+        result = model(image, cfg.INFERENCE.CONFIDENCE_THRESHOLD)
+        annotated = model.plot(result, cfg, fps=0)
+        return annotated
+    except Exception as e:
+        logger.error(f"[IMAGE] Inference failed: {e}")
+        raise
+
+
+
