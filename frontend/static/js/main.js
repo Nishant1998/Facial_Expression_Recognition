@@ -27,6 +27,16 @@ function clearError() {
     errorBox.innerText = "";
 }
 
+
+
+function clearStatus() {
+    const box = document.getElementById("statusMessage");
+    if (box) {
+        box.classList.add("d-none");
+        box.innerText = "";
+    }
+}
+
 // === Section Handling ===
 function showSection(value) {
     clearError();
@@ -120,4 +130,49 @@ function stopWebcam() {
     interval = null;
 }
 
+// === Image Upload ===
+function previewImage() {
+    const file = document.getElementById("imageInput").files[0];
+    if (file) {
+        document.getElementById("originalImage").src = URL.createObjectURL(file);
+        document.getElementById("processedBoxImage").innerHTML = "";
+        document.getElementById("imageProcessingStatus").innerText = "Waiting...";
+        log(`Image selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
+    }
+}
+
+function sendImage() {
+    const file = document.getElementById("imageInput").files[0];
+    if (!file) return showError("Please select an image.");
+
+    clearError();
+    const statusText = document.getElementById("imageProcessingStatus");
+    if (statusText) statusText.innerText = "Processing...";
+
+    const useEmoji = document.getElementById("emojiToggleImage")?.checked || false;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("emoji", useEmoji);
+
+    fetch(`${API_URL}/predict/image`, {
+        method: "POST",
+        body: formData
+    })
+        .then(async res => {
+            if (!res.ok) {
+                const errorJson = await res.json();
+                throw new Error(errorJson.error || "Server error...");
+            }
+            return res.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            document.getElementById("processedBoxImage").innerHTML = `<img src="${url}" />`;
+            log("Processed image displayed");
+        })
+        .catch(err => {
+            showError("Image processing failed: " + err.message);
+        });
+}
 
