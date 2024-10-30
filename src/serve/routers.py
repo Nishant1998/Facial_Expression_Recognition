@@ -1,6 +1,8 @@
 import asyncio
 import json
 import os
+from io import BytesIO
+from typing import Optional
 
 import cv2
 import numpy as np
@@ -14,6 +16,7 @@ from fastapi import (
     HTTPException,
     Form,
 )
+from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from starlette.requests import ClientDisconnect
 
 from src.serve.inferencer import process_image_with_model
@@ -36,6 +39,46 @@ def validate_file(file: UploadFile, allowed_exts: set, max_mb: int):
             raise HTTPException(status_code=400, detail=f"File too large (>{max_mb} MB).")
 
 # === Routes ===
+@router.post("/predict/image")
+async def predict_image(
+    request: Request,
+    file: UploadFile = File(...),
+    emoji: Optional[bool] = Form(False)
+):
+    cfg = request.app.state.cfg
+    client_ip = request.client.host
+
+    try:
+        log_info(client_ip, f"Image upload: {file.filename} | Emoji: {emoji}")
+        validate_file(file, set(cfg.API.ALLOWED_IMAGE_EXT), cfg.API.MAX_IMAGE_SIZE_MB)
+
+        contents = await file.read()
+        npimg = np.frombuffer(contents, np.uint8)
+        image = cv2.imdecode(npimg, cv2.IMREAD_UNCHANGED)
+
+        if image is None:
+            log_info(client_ip, "Invalid image data")
+            return JSONResponse(status_code=400, content={"error": "Invalid image format"})
+        else:
+            if image.ndim == 2:
+                image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
+            elif image.shape[2] == 4:
+                image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+
+        cfg.DISPLAY.EMOJI = emoji
+
+        model = request.app.state.model
+        processed = process_image_with_model(image, model, cfg)
+
+        _, jpeg = cv2.imencode('.jpg', processed, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
+
+        log_info(client_ip, "Image processed")
+        return StreamingResponse(BytesIO(jpeg.tobytes()), media_type="image/jpeg")
+
+    except Exception as e:
+        log_info(client_ip, f"Image processing failed: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     cfg = websocket.app.state.cfg
