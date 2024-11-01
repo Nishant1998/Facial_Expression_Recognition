@@ -87,7 +87,28 @@
     <!-- Video Upload Section -->
     <div id="section-video" class="d-none mt-5">
         <h4>Upload Video</h4>
-
+        <input id="videoInput" type="file" accept="video/*" class="form-control" onchange="previewVideo()"/>
+        <div class="side-by-side mt-3">
+            <div>
+                <h6>Original</h6>
+                <div class="preview-box">
+                    <video id="originalVideo" controls></video>
+                </div>
+            </div>
+            <div>
+                <h6>Processed</h6>
+                <div class="preview-box" id="processedBoxVideo">
+                    <video id="processedVideo" controls></video>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 mt-3">
+            <button class="btn btn-primary mt-3" onclick="sendVideo()">Send to Server</button>
+            <div class="form-check form-switch d-flex align-items-center mb-0 ms-2 mt-3">
+                <input class="form-check-input" type="checkbox" id="emojiToggleVideo">
+                <label class="form-check-label ms-2 mb-0" for="emojiToggleVideo">Show Emoji</label>
+            </div>
+        </div>
     </div>
 </div>
 

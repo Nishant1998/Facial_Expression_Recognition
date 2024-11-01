@@ -27,7 +27,15 @@ function clearError() {
     errorBox.innerText = "";
 }
 
-
+function showStatus(msg) {
+    log(msg, "STATUS");
+    const box = document.getElementById("statusMessage");
+    if (box) {
+        box.innerText = msg;
+        box.classList.remove("d-none", "alert-danger");
+        box.classList.add("alert-info");
+    }
+}
 
 function clearStatus() {
     const box = document.getElementById("statusMessage");
@@ -176,3 +184,49 @@ function sendImage() {
         });
 }
 
+// === Video Upload ===
+function previewVideo() {
+    const file = document.getElementById("videoInput").files[0];
+    if (file) {
+        document.getElementById("originalVideo").src = URL.createObjectURL(file);
+        document.getElementById("processedBoxVideo").innerHTML = "";
+        log(`Video selected: ${file.name}, ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+    }
+}
+
+function sendVideo() {
+    const file = document.getElementById("videoInput").files[0];
+    if (!file) return showError("Please select a video.");
+
+    clearError();
+    showStatus("Uploading and processing video...");
+
+    const useEmoji = document.getElementById("emojiToggleVideo")?.checked || false;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("emoji", useEmoji);
+
+    fetch(`${API_URL}/predict/video`, {
+        method: "POST",
+        body: formData
+    })
+        .then(res => {
+            if (!res.ok) throw new Error("Server error");
+            return res.blob();
+        })
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const container = document.getElementById("processedBoxVideo");
+            container.innerHTML = `
+                <video controls autoplay loop style="max-width: 100%;">
+                    <source src="${url}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>`;
+            showStatus("Video successfully processed and displayed.");
+            log("Processed video ready.");
+        })
+        .catch(err => {
+            showError("Video processing failed: " + err.message);
+        });
+}
