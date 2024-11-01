@@ -1,6 +1,8 @@
 import asyncio
 import json
 import os
+import tempfile
+import time
 from io import BytesIO
 from typing import Optional
 
@@ -17,9 +19,10 @@ from fastapi import (
     Form,
 )
 from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
+from starlette.concurrency import run_in_threadpool
 from starlette.requests import ClientDisconnect
 
-from src.serve.inferencer import process_image_with_model
+from src.serve.inferencer import process_video_with_model, process_image_with_model
 from src.utils import setup_logger
 
 logger = setup_logger()
@@ -77,6 +80,40 @@ async def predict_image(
 
     except Exception as e:
         log_info(client_ip, f"Image processing failed: {str(e)}")
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+
+@router.post("/predict/video")
+async def predict_video(request: Request, file: UploadFile = File(...), emoji: Optional[bool] = Form(False)):
+    cfg = request.app.state.cfg
+    client_ip = request.client.host
+    try:
+        log_info(client_ip, f"Video upload: {file.filename} | Emoji: {emoji}")
+        validate_file(file, set(cfg.API.ALLOWED_VIDEO_EXT), cfg.API.MAX_VIDEO_SIZE_MB)
+
+        video_bytes = await file.read()
+        size_mb = len(video_bytes) / (1024 * 1024)
+        if size_mb > cfg.API.MAX_VIDEO_SIZE_MB:
+            raise HTTPException(status_code=400, detail="Video too large.")
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_input:
+            temp_input.write(video_bytes)
+            input_path = temp_input.name
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_output:
+            output_path = temp_output.name
+
+        log_info(client_ip, f"Processing video ({size_mb:.2f} MB)...")
+        cfg.DISPLAY.EMOJI = emoji
+        start = time.time()
+        model = request.app.state.model
+        await run_in_threadpool(process_video_with_model, input_path, output_path, model, cfg)
+        log_info(client_ip, f"Video done in {time.time() - start:.2f} sec")
+
+        return FileResponse(output_path, media_type="video/mp4", filename="processed_video.mp4")
+
+    except Exception as e:
+        log_info(client_ip, f"Video processing failed: {str(e)}")
         return JSONResponse(status_code=500, content={"error": str(e)})
 
 @router.websocket("/ws")
