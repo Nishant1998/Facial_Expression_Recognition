@@ -39,7 +39,7 @@ class EfficientNetFER(nn.Module):
 
             # Check available providers and set execution backend
             available_providers = ort.get_available_providers()
-            use_gpu = "CUDAExecutionProvider" in available_providers
+            use_gpu = ("CUDAExecutionProvider" in available_providers) and torch.cuda.is_available()
             providers = ["CUDAExecutionProvider"] if use_gpu else ["CPUExecutionProvider"]
 
             try:

@@ -1,6 +1,7 @@
 import os
 
 import cv2
+import torch
 import numpy as np
 import onnxruntime as ort
 from PIL import Image, ImageDraw, ImageFont
@@ -35,7 +36,7 @@ class FaceEmotionNet:
             raise
 
         available_providers = ort.get_available_providers()
-        use_gpu = "CUDAExecutionProvider" in available_providers
+        use_gpu = ("CUDAExecutionProvider" in available_providers) and torch.cuda.is_available()
         providers = ["CUDAExecutionProvider"] if use_gpu else ["CPUExecutionProvider"]
 
         try:
