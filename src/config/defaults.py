@@ -61,7 +61,9 @@ _C.EXPORT.OUTPUT_PATH = "src/models/weights/EfficientNetFER.onnx"               
 _C.INFERENCE = CN()
 _C.INFERENCE.CONFIDENCE_THRESHOLD = 0.5  # Minimum confidence for detection
 _C.INFERENCE.YOLO_PATH = "src/models/weights/yolov11n-face.onnx"  # YOLO face detection model path
+_C.INFERENCE.YOLO_DOWNLOAD_URL = "https://github.com/akanametov/yolo-face/releases/download/v0.0.0/yolov11n-face.onnx"
 _C.INFERENCE.FER_PATH = "src/models/weights/EfficientNetFER.onnx"  # Facial Expression Recognition (FER) model path
+_C.INFERENCE.FER_DOWNLOAD_URL = "https://drive.google.com/uc?export=download&id=1tT8sjm-09ppD-CCzLu0zp8eSjQ37tsjH"
 
 # ===========================
 # 🔹 API Config Group

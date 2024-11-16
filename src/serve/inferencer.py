@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 from src.models import FaceEmotionNet
-from src.utils import setup_logger
+from src.utils import setup_logger, download_weights
 
 logger = setup_logger()
 
@@ -27,6 +27,8 @@ def infer(cfg):
     logger.info(f"Running in {mode} mode")
 
     # Load the model
+    download_weights(cfg.INFERENCE.YOLO_PATH,cfg.INFERENCE.YOLO_DOWNLOAD_URL)
+    download_weights(cfg.INFERENCE.FER_PATH,cfg.INFERENCE.FER_DOWNLOAD_URL)
     model = FaceEmotionNet(cfg.INFERENCE.YOLO_PATH, cfg.INFERENCE.FER_PATH, cfg.DISPLAY.VERBOSE)
     logger.info("Model loaded successfully.")
 

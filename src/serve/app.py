@@ -11,7 +11,7 @@ import uvicorn
 
 from src.models import FaceEmotionNet
 from src.serve.routers import router
-from src.utils import setup_logger
+from src.utils import setup_logger, download_weights
 from src.utils.config_utils import load_config
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,6 +34,8 @@ def create_app(cfg) -> FastAPI:
     )
 
     # === Load model ===
+    download_weights(cfg.INFERENCE.YOLO_PATH,cfg.INFERENCE.YOLO_DOWNLOAD_URL)
+    download_weights(cfg.INFERENCE.FER_PATH,cfg.INFERENCE.FER_DOWNLOAD_URL)
     model = FaceEmotionNet(
         cfg.INFERENCE.YOLO_PATH,
         cfg.INFERENCE.FER_PATH,
