@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Facial Expression Recognition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" href="static/favicon.png" type="image/png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/style.css"/>
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+    <h1 class="mb-4 text-center">Facial Expression Recognition</h1>
+
+    <!-- Error and Status Boxes -->
+    <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+    <div id="statusMessage" class="alert alert-info d-none" role="alert"></div>
+
+    <!-- Input Selector -->
+    <div class="mb-4">
+        <label class="form-label fw-bold" for="inputSelector">Choose Input Type:</label>
+        <select class="form-select" id="inputSelector" onchange="showSection(this.value)">
+            <option value="webcam" selected>Webcam</option>
+            <option value="image">Upload Image</option>
+            <option value="video">Upload Video</option>
+        </select>
+    </div>
+
+    <!-- Webcam Section -->
+    <div id="section-webcam">
+        <h4>Live Webcam</h4>
+        <div class="side-by-side mb-3">
+            <div>
+                <h6>Original</h6>
+                <div class="preview-box">
+                    <video id="webcam" autoplay playsinline muted></video>
+                </div>
+            </div>
+            <div>
+                <h6>Processed</h6>
+                <div class="preview-box">
+                    <img id="processedWebcam" alt="Processed webcam feed"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 mt-3">
+            <button class="btn btn-success" onclick="startWebcam()">Start Webcam</button>
+            <button class="btn btn-danger ms-2" onclick="stopWebcam()">Stop Webcam</button>
+            <div class="form-check form-switch d-flex align-items-center mb-0 ms-2">
+                <input class="form-check-input" type="checkbox" id="emojiToggleWebcam">
+                <label class="form-check-label ms-2 mb-0" for="emojiToggleWebcam">Show Emoji</label>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Image Upload Section -->
+    <div id="section-image" class="d-none mt-5">
+        <h4>Upload Image</h4>
+        <input id="imageInput" type="file" accept="image/*" class="form-control" onchange="previewImage()"/>
+        <div class="side-by-side mt-3">
+            <div>
+                <h6>Original</h6>
+                <div class="preview-box"><img id="originalImage" alt="Uploaded original image"/></div>
+            </div>
+            <div>
+                <h6>Processed</h6>
+                <div class="preview-box" id="processedBoxImage">
+                    <span class="placeholder-text" id="imageProcessingStatus">Waiting...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 mt-3">
+            <button class="btn btn-primary mt-3" onclick="sendImage()">Send to Server</button>
+            <div class="form-check form-switch d-flex align-items-center mb-0 ms-2 mt-3">
+                <input class="form-check-input" type="checkbox" id="emojiToggleImage">
+                <label class="form-check-label ms-2 mb-0" for="emojiToggleImage">Show Emoji</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Upload Section -->
+    <div id="section-video" class="d-none mt-5">
+        <h4>Upload Video</h4>
+        <input id="videoInput" type="file" accept="video/*" class="form-control" onchange="previewVideo()"/>
+        <div class="side-by-side mt-3">
+            <div>
+                <h6>Original</h6>
+                <div class="preview-box">
+                    <video id="originalVideo" controls></video>
+                </div>
+            </div>
+            <div>
+                <h6>Processed</h6>
+                <div class="preview-box" id="processedBoxVideo">
+                    <video id="processedVideo" controls></video>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 mt-3">
+            <button class="btn btn-primary mt-3" onclick="sendVideo()">Send to Server</button>
+            <div class="form-check form-switch d-flex align-items-center mb-0 ms-2 mt-3">
+                <input class="form-check-input" type="checkbox" id="emojiToggleVideo">
+                <label class="form-check-label ms-2 mb-0" for="emojiToggleVideo">Show Emoji</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Config & Logic -->
+<noscript>
+    <div class="alert alert-warning text-center mt-3">This site requires JavaScript to function properly.</div>
+</noscript>
+<script src="static/js/config.js" defer></script>
+<script src="static/js/main.js" defer></script>
+
+</body>
+</html>
