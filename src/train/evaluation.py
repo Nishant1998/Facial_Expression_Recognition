@@ -58,10 +58,11 @@ def evaluate_model_performance(model, test_loader, device):
     for i, r in enumerate(recall):
         print(f" - Class {i}: {r:.2f}")
 
+    class_labels = ['Surprise', 'Fear', 'Disgust', 'Happy', 'Sad', 'Angry', 'Neutral']
     plt.figure(figsize=(8, 6))
     sns.heatmap(cm_percentage, annot=True, fmt=".2f", cmap="Blues",
-                xticklabels=range(len(class_accuracy)),
-                yticklabels=range(len(class_accuracy)))
+                xticklabels=class_labels,
+                yticklabels=class_labels)
     plt.xlabel("Predicted Label")
     plt.ylabel("True Label")
     plt.title("Confusion Matrix (Percentage)")

@@ -1,6 +1,9 @@
 import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT))
+
 import argparse
 import torch
 
@@ -8,10 +11,6 @@ from src.data.dataset.loader import get_data_loader
 from src.models.efficientnet_fer import EfficientNetFER
 from src.train.evaluation import evaluate_model_performance
 from src.utils.config_utils import load_config
-
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.append(str(ROOT))
-
 
 
 def export_to_onnx(model_name="efficientnet_b3", num_classes=7,
