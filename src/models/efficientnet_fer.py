@@ -12,7 +12,7 @@ from src.utils import setup_logger
 logger = setup_logger()
 
 class EfficientNetFER(nn.Module):
-    def __init__(self, model_path="efficientnet_b3", num_classes=7, verbose=True):
+    def __init__(self, model_path="efficientnet_b3", num_classes=7, verbose=True, device='auto'):
         """
         Initializes EfficientNetFER for both training and inference.
 
@@ -39,7 +39,7 @@ class EfficientNetFER(nn.Module):
 
             # Check available providers and set execution backend
             available_providers = ort.get_available_providers()
-            use_gpu = ("CUDAExecutionProvider" in available_providers) and torch.cuda.is_available()
+            use_gpu = device != 'cpu' and ("CUDAExecutionProvider" in available_providers) and torch.cuda.is_available()
             providers = ["CUDAExecutionProvider"] if use_gpu else ["CPUExecutionProvider"]
 
             try:

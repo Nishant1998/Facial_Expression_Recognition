@@ -108,6 +108,12 @@ def process_video_with_model(input_path: str, output_path: str, model, cfg) -> N
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS) or 24
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    if width * height > 1920 * 1080 or fps > 60 or (total_frames and total_frames / fps > 30):
+        cap.release()
+        raise ValueError('Use a video up to 30 seconds, 1080p and 60 fps.')
+    if width <= 0 or height <= 0:
+        cap.release()
+        raise ValueError('Video has no readable frames.')
 
     with tempfile.TemporaryDirectory() as temp_frames_dir:
         logger.info(f"[VIDEO] Temp frame storage: {temp_frames_dir}")
@@ -117,13 +123,16 @@ def process_video_with_model(input_path: str, output_path: str, model, cfg) -> N
             ret, frame = cap.read()
             if not ret:
                 break
+            if frame_idx >= min(1800, int(fps * 30)):
+                cap.release()
+                raise ValueError('Video exceeds the 30-second processing limit.')
 
             try:
                 result = model(frame, cfg.INFERENCE.CONFIDENCE_THRESHOLD)
                 processed = model.plot(result, cfg, fps=fps)
             except Exception as e:
-                logger.warning(f"[VIDEO] Frame {frame_idx} processing failed: {e}")
-                processed = frame  # fallback: keep original frame
+                cap.release()
+                raise RuntimeError(f'Video inference failed at frame {frame_idx}.') from e
 
             frame_path = os.path.join(temp_frames_dir, f"frame_{frame_idx:04d}.jpg")
             cv2.imwrite(frame_path, processed, [int(cv2.IMWRITE_JPEG_QUALITY), 75])
@@ -134,6 +143,8 @@ def process_video_with_model(input_path: str, output_path: str, model, cfg) -> N
             frame_idx += 1
 
         cap.release()
+        if frame_idx == 0:
+            raise ValueError('Video has no readable frames.')
 
         # Build ffmpeg command
         ffmpeg_cmd = [

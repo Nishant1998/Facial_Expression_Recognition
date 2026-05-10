@@ -41,10 +41,12 @@
             <div>
                 <h6>Processed</h6>
                 <div class="preview-box">
-                    <img id="processedWebcam" alt="Processed webcam feed"/>
+                    <canvas id="processedWebcam" aria-label="Original camera video with expression overlays"></canvas>
                 </div>
             </div>
         </div>
+
+        <p id="webcamTiming" class="text-muted small" aria-live="polite">Start the camera to see live results.</p>
 
         <div class="d-flex align-items-center gap-2 mt-3">
             <button class="btn btn-success" onclick="startWebcam()">Start Webcam</button>

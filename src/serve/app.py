@@ -51,6 +51,7 @@ def create_app(cfg) -> FastAPI:
 
     # Serve static JS, CSS, images, etc.
     app.mount("/static", StaticFiles(directory=frontend_dir / "static"), name="static")
+    app.mount('/emoji', StaticFiles(directory=ROOT / 'src/asset/emoji'), name='emoji')
 
     # Optional: Serve env.js if you use dynamic API config
     env_path = frontend_dir / "env.js"
