@@ -1,0 +1,11 @@
+.git
+.idea
+.env
+.env.*
+**/__pycache__
+*.pyc
+src/models/weights
+src/data/data
+docs
+tests
+*.mp4

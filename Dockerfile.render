@@ -1,0 +1,30 @@
+FROM python:3.11-slim-bookworm
+
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    FER_DEVICE=cpu \
+    YOLO_AUTOINSTALL=false \
+    OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    APP_CONFIG=src/config/custom.yaml
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg libgl1 libglib2.0-0 ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /tmp/requirements.txt
+# Keep the training/GPU requirements intact; substitute CPU runtime only here.
+RUN pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu \
+    && sed 's/^onnxruntime-gpu==/onnxruntime==/' /tmp/requirements.txt > /tmp/requirements-cpu.txt \
+    && pip install -r /tmp/requirements-cpu.txt \
+    && pip check
+
+COPY src ./src
+COPY frontend ./frontend
+# Bake validated weights into the image, avoiding downloads on every cold start.
+RUN python -c "from src.utils.config_utils import load_config; from src.utils import download_weights; import onnx; c=load_config('src/config/custom.yaml'); [(download_weights(p,u),onnx.checker.check_model(p)) for p,u in [(c.INFERENCE.YOLO_PATH,c.INFERENCE.YOLO_DOWNLOAD_URL),(c.INFERENCE.FER_PATH,c.INFERENCE.FER_DOWNLOAD_URL)]]"
+
+EXPOSE 10000
+CMD ["sh", "-c", "exec uvicorn src.serve.app:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1"]

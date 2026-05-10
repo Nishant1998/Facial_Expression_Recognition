@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: fer-demo
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.render
+    healthCheckPath: /health
+    envVars:
+      - key: FER_DEVICE
+        value: cpu
+      - key: YOLO_AUTOINSTALL
+        value: "false"

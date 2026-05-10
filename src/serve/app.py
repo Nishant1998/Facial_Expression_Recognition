@@ -43,6 +43,10 @@ def create_app(cfg) -> FastAPI:
     )
     app.state.model = model
 
+    @app.get('/health')
+    def health():
+        return {'status': 'ok', 'device': model.device}
+
     # === API Routes ===
     app.include_router(router, prefix="/predict", tags=["Predict"])
 
