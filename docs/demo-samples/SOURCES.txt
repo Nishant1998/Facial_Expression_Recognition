@@ -1,0 +1,15 @@
+Demo photos (not a labeled accuracy benchmark)
+
+astronaut.png
+  NASA portrait of Eileen Collins, distributed by scikit-image.
+  Image: https://raw.githubusercontent.com/scikit-image/scikit-image/v0.25.2/skimage/data/astronaut.png
+  Source and public-domain statement: https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.astronaut
+
+crew.jpg
+  NASA/KSC photo KSC-05PD-0962, STS-114 crew, 4 May 2005.
+  Image: https://upload.wikimedia.org/wikipedia/commons/8/87/Sts-114-crew.jpg
+  Source and public-domain statement: https://commons.wikimedia.org/wiki/File:Sts-114-crew.jpg
+
+Use the original images as uploads while recording the app. Show the model's
+actual output; these photos do not carry verified expression labels and do not
+imply NASA or the pictured people endorse this project.

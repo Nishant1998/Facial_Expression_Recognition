@@ -1,7 +1,7 @@
 # Facial Expression Recognition 😃😠😢
 #### Real-time face detection and emotion classification using **YOLOv11** and **EfficientNet-B0**.
 
-![Banner](docs/example.png)
+![Facial Expression Recognition demo](docs/fer-demo.gif)
 
 ##  🧠 Introduction
 Facial emotion recognition (FER) refers to identifying expressions conveying basic emotions such as happiness, sadness, anger, disgust, fear, surprise, and neutrality. Accurate and robust FER is significant for human-computer interaction, clinical practices, marketing analysis, user experience research, and psychological studies.
@@ -69,7 +69,7 @@ pip install -r requirements.txt
 
 3. Obtain pretrained model weights:
 
-* [YOLOv11 Face Detector](https://github.com/akanametov/yolo-face/releases/download/v0.0.0/yolov11n-face.onnx)
+* [YOLOv11 Face Detector](https://github.com/akanametov/yolo-face/releases/download/1.0.0/yolov11n-face.onnx)
 * [EfficientNet Emotion Model](https://drive.google.com/uc?export=download&id=1tT8sjm-09ppD-CCzLu0zp8eSjQ37tsjH)
 
 Place these files in `src/models/weights`.
