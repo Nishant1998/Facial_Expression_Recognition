@@ -15,16 +15,13 @@ This project provides an end-to-end pipeline designed for real-time facial expre
 - 🧠 Real-time face detection and emotion classification
 - 🌍 Web-based interface with optional emoji overlays
 - 💾 ONNX + quantized model for low-power deployment
-- ☁️ Live deployment on Google Cloud Run with CI/CD
+- ☁️ Live interactive demo
 
 ---
 
 ## 📸 Live Demo
 
-This application is **deployed live on [Google Cloud Run](https://cloud.google.com/run)** using a CI/CD pipeline:  
-**GitHub → Cloud Build → Cloud Run**  
-
-#### 👉 **Try it now:** 🌐 [Live Demo](https://fer.projects.nishantvalvi.com)
+#### 👉 **Try it now:** 🌐 [Live Demo](https://fer.nishantvalvi.me)
 
 ---
 
@@ -135,26 +132,3 @@ docker run -p 8000:8000 fer-app
 # GPU acceleration execution
 docker run --gpus all -p 8000:8000 fer-app
 ```
-
-## 🚀 Deployment on Google Cloud Run
-
-This project is deployed using **Google Cloud Run** with a fully automated CI/CD pipeline from GitHub.
-
-Follow these steps to deploy it yourself:
-
-1. **Create a Project** on [Google Cloud Console](https://console.cloud.google.com/).
-2. **Enable the following APIs** for the project:
-   - Cloud Build API
-   - Artifact Registry API
-   - Container Analysis API
-3. Navigate to **Cloud Run > Create Service**.
-4. Choose **"Continuously deploy from a repository (source or function)"**.
-5. **Connect your GitHub repository** that contains the Dockerfile.
-6. Select the **branch** you want to auto-deploy from (e.g., `main`).
-7. Configure the **service settings**:
-   - Set the **container port** your app listens on (e.g., `8080`)
-   - Choose the appropriate **CPU, memory**, and **instance limits**
-8. Click **Create** — this will trigger a Cloud Build that builds and deploys the service.
-
-✅ Once deployed, your app will be live with a secure HTTPS endpoint.  
-🌐 [**Live Demo**](https://fer.projects.nishantvalvi.com)
